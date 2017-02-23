@@ -1,0 +1,21 @@
+<div class="row">
+    <router-outlet></router-outlet>
+    <div class="col-md-7 col-md-offset-1">
+        <table class="table" style="margin-top: 5%">
+            <th>ID</th>
+            <th>Book ID</th>
+            <th>Date Issued</th>
+            <th>Date Returned</th>
+            <th>Account ID</th>
+            <tr *ngFor="let transaction of transactions" [rowHover]="'#CCCCCC'" [class.selected]="transaction === selectedTransaction" (click)="selectRow(transaction)">
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.book_id }}</td>
+                <td>{{ transaction.date_issued }}</td>
+                <td>{{ transaction.date_returned }}</td>
+                <td>{{ transaction.account_id }}</td>
+            </tr>
+        </table>
+        <button class="btn btn-primary" type="button" (click)="returnBook(transaction)">Return</button>
+        <button class="btn btn-warning" type="button" [routerLink]="edit">Edit</button>
+    </div>
+</div>

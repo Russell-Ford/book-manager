@@ -1,0 +1,29 @@
+<div class="row">
+    <router-outlet></router-outlet>
+    <div class="col-md-7 col-md-offset-1">
+        <table class="table" style="margin-top: 5%">
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Total</th>
+            <th>Issued</th>
+            <th>Publish Date</th>
+            <th>Category</th>
+            <tr *ngFor="let book of books" [rowHover]="'#CCCCCC'" [class.selected]="book === selectedBook" (click)="selectRow(book)">
+                <td>{{book.id}}</td>
+                <td>{{book.title}}</td>
+                <td>{{book.author}}</td>
+                <td>{{book.isbn}}</td>
+                <td>{{book.total}}</td>
+                <td>{{book.issued}}</td>
+                <td>{{book.publish_date}}</td>
+                <td>{{book.category}}</td>
+            </tr>
+        </table>
+        <button class="btn btn-primary" type="button" routerLink="checkout">Checkout</button>
+        <button class="btn btn-success" type="button" routerLink="add">Add</button>
+        <button class="btn btn-warning" type="button" routerLink="edit" [attr.disabled]="canEdit()">Edit</button>
+        <button class="btn btn-danger" type="button" (click)="deleteBook(selectedBook)" [attr.disabled]="canDelete()">Delete</button>
+    </div>
+</div>

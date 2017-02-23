@@ -1,0 +1,53 @@
+<div class="col-md-3" style="float:right">
+    <h1>Edit Book</h1>
+    <form [formGroup]="bookForm" (ngSubmit)="onSubmit()"> 
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" formControlName="title" required>
+            <div *ngIf="formErrors.title" class="alert alert-danger">
+                {{ formErrors.title }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="author">Author</label>
+            <input type="text" class="form-control" id="author" formControlName="author" required>
+            <div *ngIf="formErrors.author" class="alert alert-danger">
+                {{ formErrors.author }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input type="text" class="form-control" id="isbn" formControlName="isbn" required>
+            <div *ngIf="formErrors.isbn" class="alert alert-danger">
+                {{ formErrors.isbn }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="total">Total</label>
+            <input type="text" class="form-control" id="total" formControlName="total" required>
+            <div *ngIf="formErrors.total" class="alert alert-danger">
+                {{ formErrors.total }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="issued">Issued</label>
+            <input type="text" class="form-control" id="issued" formControlName="issued" disabled>
+        </div>
+        <div class="form-group">
+            <label for="publishDate">Published</label>
+            <input type="text" class="form-control" id="publish_date" formControlName="publish_date" required>
+            <div *ngIf="formErrors.publish_date" class="alert alert-danger">
+                {{ formErrors.publish_date }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input type="text" class="form-control" id="category" formControlName="category" required>
+            <div *ngIf="formErrors.category" class="alert alert-danger">
+                {{ formErrors.category }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success" [disabled]="!bookForm.valid">Submit</button>
+        <button type="button" (click)="goBack()" class="btn btn-danger">Cancel</button>
+    </form>
+</div>

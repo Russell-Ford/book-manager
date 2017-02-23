@@ -13,7 +13,9 @@
 
 // put all your REST routes inside api-group
 Route::group(['prefix' => 'api'], function() {
-    // Route::resource('employees', 'EmployeesController');
+    Route::resource('books', 'BookController');
+    Route::resource('transactions', 'TransactionController');
+    Route::resource('accounts', 'AccountController');
 });
 
 Auth::routes();

@@ -1,0 +1,19 @@
+<div class="row">
+    <router-outlet></router-outlet>
+    <div class="col-md-7 col-md-offset-1">
+        <table class="table" style="margin-top: 5%">
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <tr *ngFor="let account of accounts" [rowHover]="'#CCCCCC'" [class.selected]="account === selectedAccount" (click)="selectRow(account)">
+                <td>{{ account.id }}</td>
+                <td>{{ account.first_name }}</td>
+                <td>{{ account.last_name }}</td>
+                <td>{{ account.email }}</td>
+            </tr>
+        </table>
+        <button class="btn btn-success" type="button" routerLink="add">Add</button>
+        <button class="btn btn-warning" type="button" routerLink="edit">Edit</button>
+    </div>
+</div>
