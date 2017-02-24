@@ -7,6 +7,7 @@ import { AppRoutingModule }     from './app-routing.module';
 
 import { BookFormReactiveModule }       from './tables/books/book-form.module';
 import { AccountFormReactiveModule }    from './tables/accounts/account-form.module';
+import { TransactionFormModule }        from './tables/transactions/transaction-form.module';
 
 import { AppComponent }                 from './app.component';
 import { HighlightDirective }           from './highlight.directive';
@@ -16,6 +17,7 @@ import { TransactionsTableComponent }   from './tables/transactions/transactions
 import { TransactionService }           from './tables/transactions/transaction.service';
 import { AccountService }               from './tables/accounts/account.service';
 import { AccountsTableComponent }       from './tables/accounts/accounts-table.component';
+import { SearchBarComponent }           from './tables/shared/search.component';
 import { EmptyComponent }               from './empty.component';
 
 
@@ -26,6 +28,7 @@ import { EmptyComponent }               from './empty.component';
     HttpModule,
     BookFormReactiveModule,
     AccountFormReactiveModule,
+    TransactionFormModule,
     AppRoutingModule
   ],
   declarations: [ 
@@ -34,6 +37,7 @@ import { EmptyComponent }               from './empty.component';
     BooksTableComponent,
     TransactionsTableComponent,
     AccountsTableComponent,
+    SearchBarComponent,
     EmptyComponent
   ],
   providers: [

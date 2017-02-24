@@ -1,21 +1,31 @@
 <div class="row">
     <router-outlet></router-outlet>
-    <div class="col-md-7 col-md-offset-1">
+    <div class="col-md-7">
         <table class="table" style="margin-top: 5%">
             <th>ID</th>
+            <th>Account ID</th>
             <th>Book ID</th>
             <th>Date Issued</th>
             <th>Date Returned</th>
-            <th>Account ID</th>
             <tr *ngFor="let transaction of transactions" [rowHover]="'#CCCCCC'" [class.selected]="transaction === selectedTransaction" (click)="selectRow(transaction)">
                 <td>{{ transaction.id }}</td>
+                <td>{{ transaction.account_id }}</td>
                 <td>{{ transaction.book_id }}</td>
                 <td>{{ transaction.date_issued }}</td>
                 <td>{{ transaction.date_returned }}</td>
-                <td>{{ transaction.account_id }}</td>
             </tr>
         </table>
-        <button class="btn btn-primary" type="button" (click)="returnBook(selectedTransaction)" [attr.disabled]="canReturn()">Return</button>
-        <button class="btn btn-warning" type="button" [routerLink]="edit" [attr.disabled]="canEdit()">Edit</button>
+        <button class="btn btn-primary" type="button" (click)="returnBook(selectedTransaction)" [attr.disabled]="canReturn()">Return book</button>
+        <button class="btn btn-warning" type="button" routerLink="edit" [attr.disabled]="canEdit()">Edit</button>
+        <span style="margin-left: 3%"><label><input type="checkbox" name="viewPending" [(ngModel)]="viewPending" (change)="refreshTransactions(!viewPending)"> View pending transactions only</label></span>
+        <div style="float:right; margin-right: 5%">
+            <span class="fake-link" (click)="firstPage()" [class.underline]="displayParams.currentPage != 0">&lt;&lt;</span>
+            <span class="fake-link" (click)="previousPage()" [class.underline]="displayParams.currentPage != 0">&lt;</span>
+            <span class="fake-link" (click)="setLimit(25)" [class.underline]="displayParams.displayPerPage == 25">25</span>
+            <span class="fake-link" (click)="setLimit(50)" [class.underline]="displayParams.displayPerPage == 50">50</span>
+            <span class="fake-link" (click)="setLimit(100)" [class.underline]="displayParams.displayPerPage == 100">100</span>
+            <span class="fake-link" (click)="nextPage()" [class.underline]="displayParams.currentPage != displayParams.lastPage">&gt;</span>
+            <span class="fake-link" (click)="lastPage()"[class.underline]="displayParams.currentPage != displayParams.lastPage">&gt;&gt;</span>
+        </div>
     </div>
 </div>

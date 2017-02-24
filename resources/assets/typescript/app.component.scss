@@ -1,6 +1,13 @@
-p {
-	color: red;
+.active {
+    background-color: #e0e0e0;
 }
 .selected {
     background-color: yellow !important;
+}
+.underline {
+    text-decoration: underline;
+}
+.fake-link {
+    color: blue;
+    cursor: pointer;
 }

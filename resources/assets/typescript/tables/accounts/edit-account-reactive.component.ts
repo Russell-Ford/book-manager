@@ -11,11 +11,11 @@ import { AccountService }                  from './account.service';
 })
 export class EditAccountFormComponent implements OnInit {
     account: Account;
+    formType = 'Edit';
 
     submitted = false;
 
     onSubmit() {
-        this.submitted = true;
         const account_id = this.account.id;
         this.account = this.accountForm.value;
         this.account.id = account_id;
@@ -76,8 +76,14 @@ export class EditAccountFormComponent implements OnInit {
     }
 
     save(): void {
-      this.accountService.update(this.account)
-          .then(() => this.goBack());
+        this.serverErrors = null;
+        this.accountService.update(this.account)
+        .then(res => { this.serverErrors = res;
+            if(this.serverErrors['success'] != null) {
+                this.submitted = true;
+                this.goBack();
+            }
+        });
     }
     goBack(): void {
         this.location.back();
@@ -86,8 +92,10 @@ export class EditAccountFormComponent implements OnInit {
     formErrors = {
         'first_name': '',
         'last_name': '',
-        'email': ''
+        'email': '',
+        'server': ''
     };
+    serverErrors = null;
 
     validationMessages = {
         'first_name': {

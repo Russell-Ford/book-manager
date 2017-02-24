@@ -1,6 +1,6 @@
 <div class="row">
     <router-outlet></router-outlet>
-    <div class="col-md-7 col-md-offset-1">
+    <div class="col-md-7">
         <table class="table" style="margin-top: 5%">
             <th>ID</th>
             <th>First Name</th>
@@ -15,5 +15,14 @@
         </table>
         <button class="btn btn-success" type="button" routerLink="add">Add</button>
         <button class="btn btn-warning" type="button" routerLink="edit" [attr.disabled]="canEdit()">Edit</button>
+        <div style="float:right; margin-right:5%">
+            <span class="fake-link" (click)="firstPage()" [class.underline]="displayParams.currentPage != 0">&lt;&lt;</span>
+            <span class="fake-link" (click)="previousPage()" [class.underline]="displayParams.currentPage != 0">&lt;</span>
+            <span class="fake-link" (click)="setLimit(25)" [class.underline]="displayParams.displayPerPage == 25">25</span>
+            <span class="fake-link" (click)="setLimit(50)" [class.underline]="displayParams.displayPerPage == 50">50</span>
+            <span class="fake-link" (click)="setLimit(100)" [class.underline]="displayParams.displayPerPage == 100">100</span>
+            <span class="fake-link" (click)="nextPage()" [class.underline]="displayParams.currentPage != displayParams.lastPage">&gt;</span>
+            <span class="fake-link" (click)="lastPage()" [class.underline]="displayParams.currentPage != displayParams.lastPage">&gt;&gt;</span>
+        </div>
     </div>
 </div>

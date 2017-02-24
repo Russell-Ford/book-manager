@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions, URLSearchParams } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -19,25 +19,45 @@ export class BookService {
     getSelectedBook(): Promise<Book> {
         return Promise.resolve(this.selectedBook);
     }
-    getBooks(): Promise<Book[]> {
-        return this.http.get(this.booksUrl)
+    getBooks(inputParams: any): Promise<Book[]> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.booksUrl, requestOptions)
                     .toPromise()
                     .then(response => response.json() as Book[])
                     .catch(this.handleError);
     }
-    update(book: Book): Promise<Book> {
+    getLastPageNum(inputParams: any): Promise<any> { 
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.booksUrl + '/last', requestOptions)
+                    .toPromise()
+                    .then(response => response.json())
+                    .catch(this.handleError);
+    }
+    update(book: Book): Promise<any> {
         const url = this.booksUrl + '/' + book.id;
         return this.http
             .put(url, JSON.stringify(book), {headers: this.headers})
             .toPromise()
-            .then(() => book)
+            .then(res => res.json())
             .catch(this.handleError);
     }
     create(book: any): Promise<any> {
         return this.http
             .post(this.booksUrl, JSON.stringify(book), {headers: this.headers})
             .toPromise()
-            .then(res => console.log(res))
+            .then(res => res.json())
             .catch(this.handleError);
     }
     delete(id: number): Promise<void> {

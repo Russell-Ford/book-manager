@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions, URLSearchParams } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -16,25 +16,45 @@ export class AccountService {
     selectAccount(account: Account): void {
         this.selectedAccount = account;
     }
-    getAccounts(): Promise<Account[]> {
-        return this.http.get(this.accountsUrl)
+    getAccounts(inputParams: any): Promise<Account[]> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.accountsUrl, requestOptions)
                     .toPromise()
                     .then(response => response.json() as Account[])
                     .catch(this.handleError);
     }
-    update(account: Account): Promise<Account> {
+    getLastPageNum(inputParams: any): Promise<any> { 
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.accountsUrl + '/last', requestOptions)
+                    .toPromise()
+                    .then(response => response.json())
+                    .catch(this.handleError);
+    }
+    update(account: Account): Promise<any> {
         const url = this.accountsUrl + '/' + account.id;
         return this.http
             .put(url, JSON.stringify(account), {headers: this.headers})
             .toPromise()
-            .then(() => account)
+            .then(res => res.json())
             .catch(this.handleError);
     }
     create(account: any): Promise<any> {
         return this.http
             .post(this.accountsUrl, JSON.stringify(account), {headers: this.headers})
             .toPromise()
-            .then(res => console.log(res))
+            .then(res => res.json())
             .catch(this.handleError);
     }
     delete(id: number): Promise<void> {

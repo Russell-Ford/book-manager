@@ -11,11 +11,11 @@ import { BookService }      from './book.service';
 })
 export class AddBookFormComponent implements OnInit {
     book: Book;
+    formType = "Add";
 
     submitted = false;
 
     onSubmit() {
-        this.submitted = true;
         this.book = this.bookForm.value;
         this.book.issued = 0;
         this.save();
@@ -93,8 +93,14 @@ export class AddBookFormComponent implements OnInit {
     }
 
     save(): void {
-      this.bookService.create(this.book)
-          .then(() => this.goBack());
+        this.serverErrors = null;
+        this.bookService.create(this.book)
+        .then(res => { this.serverErrors = res;
+            if(this.serverErrors['success'] != null) {
+                this.submitted = true;
+                this.goBack();
+            }
+        });
     }
     goBack(): void {
         this.location.back();
@@ -108,6 +114,7 @@ export class AddBookFormComponent implements OnInit {
         'publish_date': '',
         'category': ''
     };
+    serverErrors = null;
 
     validationMessages = {
         'title': {

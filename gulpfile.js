@@ -14,7 +14,10 @@ require('laravel-elixir-webpack-ex');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss');
+    var bootstrapPath = 'node_modules/bootstrap-sass/assets';
+    mix.sass('app.scss')
+	.copy(bootstrapPath + '/fonts', 'public/fonts')
+	.copy(bootstrapPath + '/javascripts/bootstrap.min.js', 'public/js');
 
     mix.webpack(
         {

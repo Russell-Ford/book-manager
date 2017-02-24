@@ -1,5 +1,5 @@
-<div class="col-md-3" style="float:right">
-    <h1>Edit Book</h1>
+<div *ngIf="!submitted" class="col-md-3" style="float:right">
+    <h1>{{ formType }} Book</h1>
     <form [formGroup]="bookForm" (ngSubmit)="onSubmit()"> 
         <div class="form-group">
             <label for="title">Title</label>
@@ -46,6 +46,12 @@
             <div *ngIf="formErrors.category" class="alert alert-danger">
                 {{ formErrors.category }}
             </div>
+        </div>
+        <div class="alert alert-danger" *ngIf="serverErrors">
+            <h4>Server reponse</h4>
+            <ul *ngFor="let error of serverErrors">
+                <li>{{ error }}</li>
+            </ul>
         </div>
         <button type="submit" class="btn btn-success" [disabled]="!bookForm.valid">Submit</button>
         <button type="button" (click)="goBack()" class="btn btn-danger">Cancel</button>

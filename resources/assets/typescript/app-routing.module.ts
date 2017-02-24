@@ -2,6 +2,7 @@ import { NgModule }                     from '@angular/core';
 import { Routes, RouterModule }         from '@angular/router';
 
 import { TransactionsTableComponent }   from './tables/transactions/transactions-table.component';
+import { EditTransactionFormComponent } from './tables/transactions/edit-transaction-form.component';
 import { AccountsTableComponent }       from './tables/accounts/accounts-table.component';
 import { AddAccountFormComponent }      from './tables/accounts/add-account-reactive.component';
 import { EditAccountFormComponent }     from './tables/accounts/edit-account-reactive.component';
@@ -20,7 +21,12 @@ const routes: Routes = [
         { path: 'edit', component: EditBookFormComponent }
         ]
     },
-    { path: 'transactions', component: TransactionsTableComponent },
+    { path: 'transactions', component: TransactionsTableComponent,
+        children: [
+        { path: '', component: EmptyComponent },
+        { path: 'edit', component: EditTransactionFormComponent }
+        ]
+    },
     { path: 'accounts', component: AccountsTableComponent,
         children: [
         { path: '', component: EmptyComponent },
@@ -28,7 +34,8 @@ const routes: Routes = [
         { path: 'edit', component: EditAccountFormComponent }
         ]
     },
-    { path: '', redirectTo: 'books', pathMatch: 'full' }
+    { path: '', redirectTo: 'books', pathMatch: 'full' },
+    { path: '*', redirectTo: 'books', pathMatch: 'full' }
 ];
 
 @NgModule({

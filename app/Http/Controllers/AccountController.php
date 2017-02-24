@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 use App\Http\Requests;
 use App\Account;
@@ -14,11 +16,21 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $accounts = Account::all();
+        $accounts = Account::take($request->displayPerPage)
+                            ->skip($request->displayPerPage * $request->currentPage)
+                            ->get();
 
         return $accounts;
+    }
+
+    public function lastPageIndex(Request $request)
+    {
+        $numRecords = count(Account::all());
+        $lastPage = intdiv($numRecords, $request->displayPerPage);
+
+        return $lastPage;
     }
 
     /**
@@ -39,7 +51,12 @@ class AccountController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = $this->validateRequest($request);
+        if($validator->fails()) {
+            return $validator->errors()->all();
+        }
         Account::create($request->all());
+        return response()->json(['success' => 'true']);
     }
 
     /**
@@ -73,8 +90,13 @@ class AccountController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = $this->validateRequest($request);
+        if($validator->fails()) {
+            return $validator->errors()->all();
+        }
         $test = $request->except('id');
         Account::find($id)->update($test);
+        return response()->json(['success' => 'true']);
     }
 
     /**
@@ -86,5 +108,15 @@ class AccountController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|alpha_num',
+            'last_name' => 'required',
+            'email' => ['required','email',Rule::unique('accounts')->ignore($request->id)]
+        ]);
+        return $validator;
     }
 }

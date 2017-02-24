@@ -22,6 +22,12 @@ import { TransactionService } from '../transactions/transaction.service';
                 </div>
                 <button type="submit" class="btn btn-success" [disabled]="!checkoutForm.valid">Submit</button>
                 <button type="button" (click)="goBack()" class="btn btn-danger">Cancel</button>
+                <div class="alert alert-danger" *ngIf="serverErrors">
+                    <h4>Server reponse</h4>
+                    <ul *ngFor="let error of serverErrors">
+                        <li>{{ error }}</li>
+                    </ul>
+                </div>
             </form>
         </div>
     `
@@ -30,6 +36,7 @@ export class TransactionCheckoutComponent implements OnInit {
     book: Book;
     transaction: Transaction;
     checkoutForm: FormGroup;
+    submitted = false;
 
     constructor(
         private fb: FormBuilder,
@@ -77,25 +84,30 @@ export class TransactionCheckoutComponent implements OnInit {
     onSubmit(): void {
         this.transaction = this.checkoutForm.value;
         this.transaction.book_id = this.book.id;
-        console.log(this.transaction);
         this.save();
     }
     save(): void {
-      this.transactionService.create(this.transaction)
-          .then(() => this.goBack());
+        this.serverErrors = null;
+        this.transactionService.create(this.transaction)
+        .then(res => { this.serverErrors = res;
+            if(this.serverErrors['success'] != null) {
+                this.submitted = true;
+                this.goBack();
+            }
+        });
     }
     goBack(): void {
         this.location.back();
     }
     formErrors = {
-        'account_id': ''
+        'account_id': '',
+        'server': ''
     };
+    serverErrors = null;
 
     validationMessages = {
         'account_id': {
-            'required':      'Name is required.',
-            'minlength':     'Name must be at least 4 characters long.',
-            'maxlength':     'Name cannot be more than 24 characters long.',
+            'required':      'Name is required.'
         }
     };
 }

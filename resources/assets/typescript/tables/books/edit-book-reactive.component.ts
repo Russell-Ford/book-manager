@@ -12,11 +12,11 @@ import { BookService }                  from './book.service';
 })
 export class EditBookFormComponent implements OnInit {
     book: Book;
+    formType = "Edit";
 
     submitted = false;
 
     onSubmit() {
-        this.submitted = true;
         const bookid = this.book.id;
         this.book = this.bookForm.value;
         this.book.id = bookid;
@@ -97,8 +97,14 @@ export class EditBookFormComponent implements OnInit {
     }
 
     save(): void {
-      this.bookService.update(this.book)
-          .then(() => this.goBack());
+        this.serverErrors = null;
+        this.bookService.update(this.book)
+        .then(res => { this.serverErrors = res;
+            if(this.serverErrors['success'] != null) {
+                this.submitted = true;
+                this.goBack();
+            }
+        });
     }
     goBack(): void {
         this.location.back();
@@ -110,8 +116,10 @@ export class EditBookFormComponent implements OnInit {
         'isbn': '',
         'total': '',
         'publish_date': '',
-        'category': ''
+        'category': '',
+        'server': ''
     };
+    serverErrors = null;
 
     validationMessages = {
         'title': {

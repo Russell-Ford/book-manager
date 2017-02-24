@@ -1,0 +1,41 @@
+<div class="col-md-3" style="float:right">
+    <h1>Edit Transaction</h1>
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()"> 
+        <div class="form-group">
+            <label for="book_id">Book ID</label>
+            <input type="text" class="form-control" id="book_id" formControlName="book_id" required>
+            <div *ngIf="formErrors.book_id" class="alert alert-danger">
+                {{ formErrors.book_id }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="account_id">Account ID</label>
+            <input type="text" class="form-control" id="account_id" formControlName="account_id" required>
+            <div *ngIf="formErrors.account_id" class="alert alert-danger">
+                {{ formErrors.account_id }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="date_issued">Date Issued</label>
+            <input type="text" class="form-control" id="date_issued" formControlName="date_issued" required>
+            <div *ngIf="formErrors.date_issued" class="alert alert-danger">
+                {{ formErrors.date_issued }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="date_returned">Date Returned</label>
+            <input type="text" class="form-control" id="date_returned" formControlName="date_returned">
+            <div *ngIf="formErrors.date_returned" class="alert alert-danger">
+                {{ formErrors.date_returned }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success" [disabled]="!transactionForm.valid">Submit</button>
+        <button type="button" class="btn btn-danger" (click)="goBack()">Cancel</button>
+        <div class="alert alert-danger" *ngIf="serverErrors">
+            <h4>Server reponse</h4>
+            <ul *ngFor="let error of serverErrors">
+                <li>{{ error }}</li>
+            </ul>
+        </div>
+    </form>
+</div>

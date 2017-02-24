@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Account } from './account';
 import { AccountService } from './account.service';
+import { DisplayParams } from '../shared/params';
 
 @Component({
     selector: 'accounts-table',
@@ -11,14 +12,19 @@ import { AccountService } from './account.service';
 export class AccountsTableComponent implements OnInit {
     accounts: Account[] = [];
     selectedAccount = <Account>{};
+    displayParams = <DisplayParams>{};
 
     constructor(private accountService: AccountService) { }
 
     ngOnInit(): void {
+        this.displayParams.displayPerPage = 25;
+        this.displayParams.currentPage = 0;
+        this.getLastPageNum();
         this.getAccounts();
     }
     getAccounts(): void {
-        this.accountService.getAccounts().then(accounts => this.accounts = accounts);
+        this.accountService.getAccounts(this.displayParams)
+            .then(accounts => this.accounts = accounts);
     }
     selectRow(account: Account): void {
         this.selectedAccount = account;
@@ -27,10 +33,40 @@ export class AccountsTableComponent implements OnInit {
     canEdit() {
         if(this.selectedAccount.id != null) {
             return null;
-            // again with the hacky null return (see books table)
         } else {
             return true;
         }
+    }
+    getLastPageNum() {
+        this.accountService.getLastPageNum(this.displayParams)
+            .then(page => this.displayParams.lastPage = page);
+    }
+    firstPage() {
+        this.displayParams.currentPage = 0;
+        this.getAccounts();
+    }
+    lastPage() {
+        console.log(this.displayParams.lastPage);
+        this.displayParams.currentPage = this.displayParams.lastPage;
+        this.getAccounts();
+    }
+    nextPage() {
+        if(this.displayParams.currentPage != this.displayParams.lastPage) {
+            this.displayParams.currentPage += 1;
+            this.getAccounts();
+        }
+    }
+    previousPage() {
+        if(this.displayParams.currentPage != 0) {
+            this.displayParams.currentPage -= 1;
+            this.getAccounts();
+        }
+    }
+    setLimit(limit: number) {
+        this.displayParams.displayPerPage = limit;
+        this.firstPage();
+        this.getLastPageNum();
+        this.getAccounts();
     }
 }
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 use App\Http\Requests;
 use App\Book;
@@ -14,11 +16,21 @@ class BookController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::all();
+        $accounts = Book::take($request->displayPerPage)
+                            ->skip($request->displayPerPage * $request->currentPage)
+                            ->get();
 
-        return $books;
+        return $accounts;
+    }
+
+    public function lastPageIndex(Request $request)
+    {
+        $numRecords = count(Book::all());
+        $lastPage = intdiv($numRecords, $request->displayPerPage);
+
+        return $lastPage;
     }
 
     /**
@@ -39,7 +51,12 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = $this->validateRequest($request);
+        if($validator->fails()) {
+            return response($validator->errors()->all());
+        }
         Book::create($request->all());
+        return response()->json(['success' => 'true']);
     }
 
     /**
@@ -73,8 +90,13 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $test = $request->except('id');
-        Book::find($id)->update($test);
+        $validator = $this->validateRequest($request);
+        if($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $book = $request->except('id');
+        Book::find($id)->update($book);
+        return response()->json(['success' => 'true']);
     }
 
     /**
@@ -85,6 +107,27 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        Book::destroy($id);
+        $book = Book::findorfail($id);
+        if($book->issued == 0) {
+            Book::destroy($id);
+            return response()->json(['success' => 'true']);
+        } else {
+            return response("Cannot delete book entry while books are still issued.", 400)
+                    ->header('Content-Type', 'text/plain');
+        }
+    }
+
+    private function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'author' => 'required|alpha_num',
+            'isbn' => ['required','digits:13', Rule::unique('books')->ignore($request->id)],
+            'total' => 'required|numeric',
+            'issued' => 'required|numeric',
+            'publish_date' => 'required|date_format:"Y-m-d"',
+            'category' => 'required|alpha'
+        ]);
+        return $validator;
     }
 }

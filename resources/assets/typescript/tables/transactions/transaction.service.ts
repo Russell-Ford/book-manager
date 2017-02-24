@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions, URLSearchParams } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -19,25 +19,66 @@ export class TransactionService {
     getSelectedTransaction(): Promise<Transaction> {
         return Promise.resolve(this.selectedTransaction);
     }
-    getTransactions(): Promise<Transaction[]> {
-        return this.http.get(this.transactionsUrl)
+    getTransactions(inputParams: any): Promise<Transaction[]> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.transactionsUrl, requestOptions)
                     .toPromise()
                     .then(response => response.json() as Transaction[])
                     .catch(this.handleError);
     }
+    getPendingTransactions(inputParams: any): Promise<Transaction[]> {
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.transactionsUrl + '/pending', requestOptions)
+                    .toPromise()
+                    .then(response => response.json() as Transaction[])
+                    .catch(this.handleError);
+    }
+    getLastPageNum(inputParams: any): Promise<any> { 
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('displayPerPage', inputParams.displayPerPage);
+        params.set('currentPage', inputParams.currentPage);
+
+        let requestOptions = new RequestOptions();
+        requestOptions.search = params;
+
+        return this.http.get(this.transactionsUrl + '/last', requestOptions)
+                    .toPromise()
+                    .then(response => response.json())
+                    .catch(this.handleError);
+    }
     returnBook(transaction: Transaction): Promise<Transaction> {
+        const url = this.transactionsUrl + '/return/' + transaction.id;
+        return this.http
+            .put(url, JSON.stringify(transaction), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+    create(transaction: any): any {
+        return this.http
+            .post(this.transactionsUrl, JSON.stringify(transaction), {headers: this.headers})
+            .toPromise()
+            .then(res => res.json())
+            .catch(this.handleError);
+    }
+    update(transaction: Transaction): Promise<any> {
         const url = this.transactionsUrl + '/' + transaction.id;
         return this.http
             .put(url, JSON.stringify(transaction), {headers: this.headers})
             .toPromise()
-            .then(() => transaction)
-            .catch(this.handleError);
-    }
-    create(transaction: any): Promise<any> {
-        return this.http
-            .post(this.transactionsUrl, JSON.stringify(transaction), {headers: this.headers})
-            .toPromise()
-            .then(res => console.log(res))
+            .then(res => res.json())
             .catch(this.handleError);
     }
     private handleError(error: any): Promise<any> {

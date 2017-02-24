@@ -2,52 +2,57 @@ import { Component, OnInit }                    from '@angular/core';
 import { FormGroup, FormBuilder, Validators }   from '@angular/forms';
 import { Location }                             from '@angular/common';
 
-import { Account }                         from './account';
-import { AccountService }                  from './account.service';
+import { Transaction }                         from './transaction';
+import { TransactionService }                  from './transaction.service';
 
 @Component({
-    selector: 'add-account-form',
-    template: require('./account-form-reactive.component.html')
+    selector: 'edit-transaction-form',
+    template: require('./edit-transaction-form.component.html')
 })
-export class AddAccountFormComponent implements OnInit {
-    account: Account;
-    formType = 'Add';
+export class EditTransactionFormComponent implements OnInit {
+    transaction: Transaction;
 
     submitted = false;
 
     onSubmit() {
-        this.account = this.accountForm.value;
+        const transaction_id = this.transaction.id;
+        this.transaction = this.transactionForm.value;
+        this.transaction.id = transaction_id;
         this.save();
     }
 
-    accountForm: FormGroup;
+    transactionForm: FormGroup;
     constructor(
         private fb: FormBuilder,
-        private accountService: AccountService,
+        private transactionService: TransactionService,
         private location: Location
     ) { }
 
     ngOnInit(): void {
+        this.transaction = this.transactionService.selectedTransaction;
         this.buildForm();
     }
 
     buildForm(): void {
-        this.accountForm = this.fb.group({
-            'first_name': ['', [
+        this.transactionForm = this.fb.group({
+            'book_id': [this.transaction.book_id, [
                 Validators.required
                 ]
             ],
-            'last_name': ['', [
+            'account_id': [this.transaction.account_id, [
                 Validators.required
                 ]
             ],
-            'email': ['', [
+            'date_issued': [this.transaction.date_issued, [
                 Validators.required
+                ]
+            ],
+            'date_returned': [this.transaction.date_returned, [
                 ]
             ]
         });
 
-        this.accountForm.valueChanges
+        this.transactionForm.valueChanges
             .subscribe(data => this.onValueChanged(data));
 
         this.onValueChanged(); // (re)set validation messages now
@@ -55,8 +60,8 @@ export class AddAccountFormComponent implements OnInit {
 
 
     onValueChanged(data?: any) {
-        if (!this.accountForm) { return; }
-        const form = this.accountForm;
+        if (!this.transactionForm) { return; }
+        const form = this.transactionForm;
 
         for (const field in this.formErrors) {
             // clear previous error message (if any)
@@ -74,7 +79,7 @@ export class AddAccountFormComponent implements OnInit {
 
     save(): void {
         this.serverErrors = null;
-        this.accountService.create(this.account)
+        this.transactionService.update(this.transaction)
         .then(res => { this.serverErrors = res;
             if(this.serverErrors['success'] != null) {
                 this.submitted = true;
@@ -87,22 +92,25 @@ export class AddAccountFormComponent implements OnInit {
     }
 
     formErrors = {
-        'first_name': '',
-        'last_name': '',
-        'email': '',
+        'book_id': '',
+        'account_id': '',
+        'date_issued': '',
+        'date_returned': '',
         'server': ''
     };
     serverErrors = null;
 
     validationMessages = {
-        'first_name': {
-            'required':      'Name is required.'
+        'book_id': {
+            'required':      'Book ID is required.'
         },
-        'last_name': {
-            'required': 'Author is required.'
+        'account_id': {
+            'required': 'Account ID is required.'
         },
-        'email': {
-            'required': 'email is required.'
+        'date_issued': {
+            'required': 'Date issued is required.'
+        },
+        'date_returned': {
         }
     };
 }
