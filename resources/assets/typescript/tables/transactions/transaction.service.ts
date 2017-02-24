@@ -25,7 +25,7 @@ export class TransactionService {
                     .then(response => response.json() as Transaction[])
                     .catch(this.handleError);
     }
-    return(transaction: Transaction): Promise<Transaction> {
+    returnBook(transaction: Transaction): Promise<Transaction> {
         const url = this.transactionsUrl + '/' + transaction.id;
         return this.http
             .put(url, JSON.stringify(transaction), {headers: this.headers})
@@ -37,7 +37,7 @@ export class TransactionService {
         return this.http
             .post(this.transactionsUrl, JSON.stringify(transaction), {headers: this.headers})
             .toPromise()
-            .then(res => console.log(res.json()))
+            .then(res => console.log(res))
             .catch(this.handleError);
     }
     private handleError(error: any): Promise<any> {

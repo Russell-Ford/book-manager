@@ -15,7 +15,7 @@
                 <td>{{ transaction.account_id }}</td>
             </tr>
         </table>
-        <button class="btn btn-primary" type="button" (click)="returnBook(transaction)">Return</button>
-        <button class="btn btn-warning" type="button" [routerLink]="edit">Edit</button>
+        <button class="btn btn-primary" type="button" (click)="returnBook(selectedTransaction)" [attr.disabled]="canReturn()">Return</button>
+        <button class="btn btn-warning" type="button" [routerLink]="edit" [attr.disabled]="canEdit()">Edit</button>
     </div>
 </div>

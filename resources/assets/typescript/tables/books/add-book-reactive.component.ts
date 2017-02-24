@@ -36,9 +36,7 @@ export class AddBookFormComponent implements OnInit {
     buildForm(): void {
         this.bookForm = this.fb.group({
             'title': ['', [
-                Validators.required,
-                Validators.minLength(4),
-                Validators.maxLength(24)
+                Validators.required
                 ]
             ],
             'author': ['', [
@@ -113,21 +111,21 @@ export class AddBookFormComponent implements OnInit {
 
     validationMessages = {
         'title': {
-            'required':      'Name is required.',
-            'minlength':     'Name must be at least 4 characters long.',
-            'maxlength':     'Name cannot be more than 24 characters long.',
-            'forbiddenName': 'Someone named "Bob" cannot be a hero.'
+            'required':      'Name is required.'
         },
         'author': {
             'required': 'Author is required.'
         },
         'isbn': {
             'required': 'ISBN is required.',
-            'minLength': 'ISBN must be 13 characters',
-            'maxLength': 'ISBN must be 13 characters'
+            'minlength': 'ISBN must be 13 characters',
+            'maxlength': 'ISBN must be 13 characters'
         },
         'total': {
             'required': 'Total is required.'
+        },
+        'issued': {
+            'required': 'You shouldn\'t see this.'
         },
         'publish_date': {
             'required': 'Publish date is required.'

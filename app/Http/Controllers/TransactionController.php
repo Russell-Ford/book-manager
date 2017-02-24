@@ -41,13 +41,17 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $book = Book::find($request->book_id)->toArray();
-        if( $book['issued'] + 1 <= $book['total'] ) {
+        $book = Book::findorfail($request->book_id);
+        $updatedBook = $book->toArray();
+        if( $updatedBook['issued'] + 1 <= $updatedBook['total'] ) {
             $transaction = $request->all();
             $transaction['date_issued'] = Carbon::now();
-            $book['issued'] += 1;
-            Book::update($book);
+            $updatedBook['issued'] += 1;
+            $book->update($updatedBook);
             Transaction::create($transaction);
+        } else {
+            return response("Number of books issued cannot be greater than total number of books", 500)
+                    ->header('Content-Type', 'text/plain');
         }
     }
 
@@ -83,6 +87,19 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         //
+    }
+    public function returnBook(Request $request, $id)
+    {
+        $book = Book::findorfail($request->book_id);
+        $updatedBook = $book->toArray();
+        $transaction = Transaction::findorfail($request->id);
+        $updatedTransaction = $transaction->toArray();
+        if( $updatedTransaction['date_returned'] == null ) {
+            $updatedTransaction['date_returned'] = Carbon::now();
+            $transaction->update($updatedTransaction);
+            $updatedBook['issued'] -= 1;
+            $book->update($updatedBook);
+        }
     }
 
     /**

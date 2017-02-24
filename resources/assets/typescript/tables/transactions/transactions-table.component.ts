@@ -25,6 +25,22 @@ export class TransactionsTableComponent implements OnInit {
         this.selectedTransaction = transaction;
     }
     returnBook(transaction: Transaction): void {
-        this.transactionService.return(transaction);
+        this.transactionService.returnBook(transaction);
+        this.getTransactions();
+    }
+    canReturn() {
+        if(this.selectedTransaction.date_returned == null) {
+            return null;
+        } else {
+            return true;
+        }
+    }
+    canEdit() {
+        if(this.selectedTransaction.id != null) {
+            return null;
+            // again with the hacky null return (see books table)
+        } else {
+            return true;
+        }
     }
 }

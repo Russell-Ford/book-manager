@@ -14,6 +14,6 @@
             </tr>
         </table>
         <button class="btn btn-success" type="button" routerLink="add">Add</button>
-        <button class="btn btn-warning" type="button" routerLink="edit">Edit</button>
+        <button class="btn btn-warning" type="button" routerLink="edit" [attr.disabled]="canEdit()">Edit</button>
     </div>
 </div>

@@ -13,6 +13,7 @@
 
 // put all your REST routes inside api-group
 Route::group(['prefix' => 'api'], function() {
+    Route::put('transactions/{id}', 'TransactionController@returnBook');
     Route::resource('books', 'BookController');
     Route::resource('transactions', 'TransactionController');
     Route::resource('accounts', 'AccountController');

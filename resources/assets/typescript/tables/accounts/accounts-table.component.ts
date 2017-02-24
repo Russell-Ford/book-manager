@@ -24,5 +24,13 @@ export class AccountsTableComponent implements OnInit {
         this.selectedAccount = account;
         this.accountService.selectAccount(account);
     }
+    canEdit() {
+        if(this.selectedAccount.id != null) {
+            return null;
+            // again with the hacky null return (see books table)
+        } else {
+            return true;
+        }
+    }
 }
 
