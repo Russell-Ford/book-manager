@@ -22,6 +22,7 @@ class CreateBooksTable extends Migration
             $table->smallInteger('total');
             $table->smallInteger('issued');
             $table->date('publish_date');
+            $table->boolean('deleted'); // I'm aware of how hacky this is, but didn't have the time to use Eloquent.
             $table->timestamps();
         });
     }

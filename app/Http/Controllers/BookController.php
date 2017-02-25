@@ -18,7 +18,8 @@ class BookController extends Controller
      */
     public function index(Request $request)
     {
-        $accounts = Book::take($request->displayPerPage)
+        $accounts = Book::where('deleted', 'false')
+                            ->take($request->displayPerPage)
                             ->skip($request->displayPerPage * $request->currentPage)
                             ->get();
 
@@ -55,7 +56,15 @@ class BookController extends Controller
         if($validator->fails()) {
             return response($validator->errors()->all());
         }
-        Book::create($request->all());
+        $book['title'] = $request->title;
+        $book['author'] = $request->author;
+        $book['isbn'] = $request->isbn;
+        $book['total'] = $request->total;
+        $book['issued'] = $request->issued;
+        $book['publish_date'] = $request->publish_date;
+        $book['category'] = $request->category;
+        $book['deleted'] = false;
+        Book::create($book);
         return response()->json(['success' => 'true']);
     }
 
@@ -94,7 +103,13 @@ class BookController extends Controller
         if($validator->fails()) {
             return $validator->errors()->all();
         }
-        $book = $request->except('id');
+        $book['title'] = $request->title;
+        $book['author'] = $request->author;
+        $book['isbn'] = $request->isbn;
+        $book['total'] = $request->total;
+        $book['issued'] = $request->issued;
+        $book['publish_date'] = $request->publish_date;
+        $book['category'] = $request->category;
         Book::find($id)->update($book);
         return response()->json(['success' => 'true']);
     }
@@ -109,7 +124,8 @@ class BookController extends Controller
     {
         $book = Book::findorfail($id);
         if($book->issued == 0) {
-            Book::destroy($id);
+            $book->deleted = true;
+            $book->update();
             return response()->json(['success' => 'true']);
         } else {
             return response("Cannot delete book entry while books are still issued.", 400)
@@ -121,7 +137,7 @@ class BookController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
-            'author' => 'required|alpha_num',
+            'author' => 'required',
             'isbn' => ['required','digits:13', Rule::unique('books')->ignore($request->id)],
             'total' => 'required|numeric',
             'issued' => 'required|numeric',

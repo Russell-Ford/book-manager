@@ -55,7 +55,10 @@ class AccountController extends Controller
         if($validator->fails()) {
             return $validator->errors()->all();
         }
-        Account::create($request->all());
+        $account['first_name'] = $request->first_name;
+        $account['last_name'] = $request->last_name;
+        $account['email'] = $request->email;
+        Account::create($account);
         return response()->json(['success' => 'true']);
     }
 
@@ -94,8 +97,10 @@ class AccountController extends Controller
         if($validator->fails()) {
             return $validator->errors()->all();
         }
-        $test = $request->except('id');
-        Account::find($id)->update($test);
+        $account['first_name'] = $request->first_name;
+        $account['last_name'] = $request->last_name;
+        $account['email'] = $request->email;
+        Account::find($id)->update($account);
         return response()->json(['success' => 'true']);
     }
 

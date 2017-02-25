@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { Transaction }          from './transaction';
 import { TransactionService }   from './transaction.service';
@@ -14,30 +15,35 @@ export class TransactionsTableComponent implements OnInit {
     selectedTransaction: Transaction = <Transaction>{};
     displayParams = <DisplayParams>{}; 
     viewPending = false;
+    subscription = null;
 
-    constructor(private transactionService: TransactionService) { }
+    constructor(
+        private transactionService: TransactionService,
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
         this.displayParams.displayPerPage = 25;
         this.displayParams.currentPage = 0;
         this.getLastPageNum();
-        this.getTransactions();
+        this.subscribeRouter();
     }
-    getTransactions(): void {
-        if(this.viewPending) {
-            this.getPendingTransactions();
-        } else {
-            this.transactionService.getTransactions(this.displayParams)
-                .then(transactions => this.transactions = transactions);
-        }
+    subscribeRouter() {
+        this.subscription = this.router.events.subscribe((event) => {
+            if(event instanceof NavigationEnd) {
+                if(event.url == "/transactions") {
+                    this.getTransactions(this.viewPending);
+                }
+            }
+        });
     }
-    getPendingTransactions(): void {
-        this.transactionService.getPendingTransactions(this.displayParams)
-            .then(transactions => this.transactions = transactions);
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
-    refreshTransactions(viewPending: boolean): void {
+    getTransactions(viewPending?: boolean): void {
         if(viewPending) {
-            this.getPendingTransactions();
+            this.transactionService.getPendingTransactions(this.displayParams)
+                .then(transactions => this.transactions = transactions);
         } else {
             this.transactionService.getTransactions(this.displayParams)
                 .then(transactions => this.transactions = transactions);
@@ -48,8 +54,10 @@ export class TransactionsTableComponent implements OnInit {
         this.transactionService.selectTransaction(transaction);
     }
     returnBook(transaction: Transaction): void {
-        this.transactionService.returnBook(transaction);
-        this.getTransactions();
+        this.transactionService.returnBook(transaction)
+            .then(() => {
+                this.getTransactions(this.viewPending)
+        });
     }
     canReturn() {
         if(this.selectedTransaction.date_returned == null) {
@@ -71,28 +79,28 @@ export class TransactionsTableComponent implements OnInit {
     }
     firstPage() {
         this.displayParams.currentPage = 0;
-        this.getTransactions();
+        this.getTransactions(this.viewPending);
     }
     lastPage() {
         this.displayParams.currentPage = this.displayParams.lastPage;
-        this.getTransactions();
+        this.getTransactions(this.viewPending);
     }
     nextPage() {
         if(this.displayParams.currentPage != this.displayParams.lastPage) {
             this.displayParams.currentPage += 1;
-            this.getTransactions();
+            this.getTransactions(this.viewPending);
         }
     }
     previousPage() {
         if(this.displayParams.currentPage != 0) {
             this.displayParams.currentPage -= 1;
-            this.getTransactions();
+            this.getTransactions(this.viewPending);
         }
     }
     setLimit(limit: number) {
         this.displayParams.displayPerPage = limit;
         this.firstPage();
         this.getLastPageNum();
-        this.getTransactions();
+        this.getTransactions(this.viewPending);
     }
 }

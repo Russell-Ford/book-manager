@@ -72,7 +72,9 @@ class TransactionController extends Controller
         $book = Book::findorfail($request->book_id);
         Account::findorfail($request->account_id);
         if( $book->issued + 1 <= $book->total ) {
-            $transaction = $request->all();
+            $transaction['book_id'] = $request->book_id;
+            $transaction['account_id'] = $request->account_id;
+            $transaction['date_issued'] = $request->date_issued;
             $book->issued += 1;
             $book->update();
             Transaction::create($transaction);
@@ -131,7 +133,7 @@ class TransactionController extends Controller
         }
         $book = Book::findorfail($request->book_id);
         $updatedBook = $book->toArray();
-        $transaction = Transaction::findorfail($request->id);
+        $transaction = Transaction::findorfail($id);
         $updatedTransaction = $transaction->toArray();
         if( $updatedTransaction['date_returned'] == null ) {
             $updatedTransaction['date_returned'] = Carbon::now()->toDateTimeString();

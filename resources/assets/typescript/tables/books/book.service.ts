@@ -16,9 +16,6 @@ export class BookService {
     selectBook(book: Book): void {
         this.selectedBook = book;
     }
-    getSelectedBook(): Promise<Book> {
-        return Promise.resolve(this.selectedBook);
-    }
     getBooks(inputParams: any): Promise<Book[]> {
         let params: URLSearchParams = new URLSearchParams();
         params.set('displayPerPage', inputParams.displayPerPage);

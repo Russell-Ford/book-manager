@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { Account } from './account';
 import { AccountService } from './account.service';
@@ -13,14 +14,30 @@ export class AccountsTableComponent implements OnInit {
     accounts: Account[] = [];
     selectedAccount = <Account>{};
     displayParams = <DisplayParams>{};
+    subscription = null;
 
-    constructor(private accountService: AccountService) { }
+    constructor(
+        private accountService: AccountService,
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
         this.displayParams.displayPerPage = 25;
         this.displayParams.currentPage = 0;
         this.getLastPageNum();
-        this.getAccounts();
+        this.subscribeRouter();
+    }
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
+    subscribeRouter() {
+        this.subscription = this.router.events.subscribe((event) => {
+            if(event instanceof NavigationEnd) {
+                if(event.url == "/accounts") {
+                    this.getAccounts();
+                }
+            }
+        });
     }
     getAccounts(): void {
         this.accountService.getAccounts(this.displayParams)

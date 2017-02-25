@@ -17,7 +17,7 @@
         </table>
         <button class="btn btn-primary" type="button" (click)="returnBook(selectedTransaction)" [attr.disabled]="canReturn()">Return book</button>
         <button class="btn btn-warning" type="button" routerLink="edit" [attr.disabled]="canEdit()">Edit</button>
-        <span style="margin-left: 3%"><label><input type="checkbox" name="viewPending" [(ngModel)]="viewPending" (change)="refreshTransactions(!viewPending)"> View pending transactions only</label></span>
+        <span style="margin-left: 3%"><label><input type="checkbox" name="viewPending" [(ngModel)]="viewPending" (change)="getTransactions(!viewPending)"> View pending transactions only</label></span>
         <div style="float:right; margin-right: 5%">
             <span class="fake-link" (click)="firstPage()" [class.underline]="displayParams.currentPage != 0">&lt;&lt;</span>
             <span class="fake-link" (click)="previousPage()" [class.underline]="displayParams.currentPage != 0">&lt;</span>

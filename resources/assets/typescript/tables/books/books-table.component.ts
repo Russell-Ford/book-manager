@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { Book } from './book';
 import { BookService } from './book.service';
@@ -13,18 +14,35 @@ export class BooksTableComponent implements OnInit {
     books: Book[] = [];
     selectedBook: Book = <Book>{};
     displayParams = <DisplayParams>{}; 
+    subscription = null;
 
-    constructor(private bookService: BookService) { }
+    constructor(
+        private bookService: BookService, 
+        private router: Router
+    ) { }
 
-    getBooks(): void {
-        this.bookService.getBooks(this.displayParams)
-            .then(books => this.books = books);
-    }
     ngOnInit(): void {
         this.displayParams.displayPerPage = 25;
         this.displayParams.currentPage = 0;
         this.getLastPageNum();
         this.getBooks();
+        this.subscribeRouter();
+    }
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
+    subscribeRouter() {
+        this.subscription = this.router.events.subscribe((event) => {
+            if(event instanceof NavigationEnd) {
+                if(event.url == "/books") {
+                    this.getBooks();
+                }
+            }
+        });
+    }
+    getBooks(): void {
+        this.bookService.getBooks(this.displayParams)
+            .then(books => this.books = books);
     }
     selectRow(book: Book): void {
         this.selectedBook = book;
